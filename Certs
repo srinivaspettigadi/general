@@ -1,0 +1,155 @@
+
+
+https://medium.com/rahasak/certificate-formats-e7642c6ae10d
+
+
+CERTIFICATES
+================
+
+x.509 Certificates
+===================
+===================
+===================
+
+x.509 certs --> x.509 certificate is a digital document that has been encoded according to RFC 5280 standard.
+
+x.509 comes with 2 formats
+
+1. PEM format
+2. DER format
+
+
+
+PEM format is the most common format that Certificate authorities issue certificate in.
+
+It contains --BEGIN CERTIFICATE-- and --END CERTIFICATE-- statements.
+
+Following are the special attributes of PEM format certificates.
+
+1. They are Base64 encoded ASCII files
+2. They have extensions like .pem, .cer, .crt, .key
+3. Apache and similar server uses PEM format certificates.
+
+
+PEM format certificate may contain 
+
+1. Private keys (RSA or DSA)
+2. Public Keys  (RSA or DSA)
+3. x.509 certificates
+
+View PEM certificate
+=====================
+
+openssl x509 -in certificate.pem -text -noout
+
+to view the content , you can use vi or cat which contains  --BEGIN CERTIFICATE-- and --END CERTIFICATE-- statements.
+
+
+DER CERTIFICATES
+=====================
+
+Following are some special attributes of DER format certificates
+
+1. They are Binary format files
+2. They have extensions .cer & .der
+3. DER is typically used in Java platform
+
+DER format certificates may contains
+======================================
+
+1. Private keys (RSA or DSA)
+2. Public keys (RSA or DSA)
+3. X.509 certificates
+
+
+you can open DER file content but it has all the binary formats.
+
+===============================================================================================================================================
+
+
+
+PKCS#7 Certificates
+====================
+====================
+====================
+
+Public-Key CryptoSystem number 7 is defined in cryptographic message standard RFC 2315. It stores only X.509 certificates. 
+
+These certificates can be serialized in two formats
+
+1. PEM formats
+2. DER formats
+
+
+PEM format PKCS#7 certificates contains ' --BEGIN PKCS7--' and '--END PKCS7' statements.
+
+PKCS#7 certificate file may contain
+
+1. multiple certificates.
+2. may have a private key.
+
+The standard extensions for these four versions is .p7b or .p7c
+
+
+View PEM format PKCS#7  certificate content
+
+openssl pkcs7 -noout -text -print_certs -inform pem -in certificate.cer
+
+
+View DER format PKCS#7 certificate content
+
+openssl pkcs7 -noout -text -print_certs -inform der -in certificate.p7b
+
+============================================================================================================================================================
+
+PKCS#12 certificates
+=====================
+=====================
+=====================
+
+This format is also known as PFX and P12. ---> reason is PFX was microsoft extension and P12 was netscape extension.
+
+ 
+(These files are used for storing, --> actually can be used as a keystore)
+
+It contains
+
+1. Server certificates
+2. Intermediate certificates
+3. Private Keys
+4. X.509 certificates
+
+
+Convert PEM (.pem)  to PKCS#12 (.p12)
+
+you need both certificate and key here to convert
+
+openssl pkcs12 -export -in certificate.pem -inkey www.zenz.com.key -out bundle.p12
+
+Convert PKCS#12 to PEM(.pem)
+
+openssl pkcs12 -in bundle.p12 -out cert.cer -nodes
+
+
+View pkcs#12 file content
+============================
+
+openssl pkcs12 -info -in bundle.p12
+
+It will prompt for password of bundle.p12 and displays all the keys stored in the file (since .p12 can be used as a keystore).
+
+
+CONVERT your .p12 file to JKS
+==============================================================================
+
+Create an empty JKS store
+
+keytool -genkey -alias anyname -keystore yourcertificate.jks 
+keytool -delete -alias anyname -keystore yourcertificate.jks
+
+Import your certificate.p12 file into yourcertificate.jks file
+
+keytool -importkeystore -srckeystore xxxx.p12 -destkeystore xxxx.jks -srcstoretype pkcs12 -deststoretype jks -srcalias xxxx_alias_name -destalias xxxx_alias_name
+
+
+
